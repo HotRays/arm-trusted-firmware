@@ -14,8 +14,10 @@
 #include <platform_def.h>
 #include <sunxi_def.h>
 #include <sunxi_mmap.h>
+#include <delay_timer.h>
 
 #include "sunxi_private.h"
+#include "sunxi_i2c.h"
 
 static entry_point_info_t bl33_image_ep_info;
 
@@ -54,6 +56,8 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
+	adapt_axp806->slaveaddr=CONFIG_SYS_I2C_SLAVE;
+	adapt_axp806->hwadapnr=AXP806_IIC;
 	generic_delay_timer_init();
 
 	/* Configure the interrupt controller */
@@ -61,6 +65,9 @@ void bl31_platform_setup(void)
 	gicv2_distif_init();
 	gicv2_pcpu_distif_init();
 	gicv2_cpuif_enable();
+	
+	/*init iic for axp806*/
+        sunxi_r_i2c_init(adapt_axp806,CONFIG_SYS_I2C_SPEED,CONFIG_SYS_I2C_SLAVE);
 
 	INFO("BL31: Platform setup done\n");
 }

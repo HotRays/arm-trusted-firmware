@@ -15,10 +15,13 @@
 #include <psci.h>
 #include <sunxi_mmap.h>
 #include <sunxi_cpucfg.h>
+#include "sunxi_i2c.h"
 
 #define SUNXI_WDOG0_CTRL_REG		(SUNXI_WDOG_BASE + 0x0010)
 #define SUNXI_WDOG0_CFG_REG		(SUNXI_WDOG_BASE + 0x0014)
 #define SUNXI_WDOG0_MODE_REG		(SUNXI_WDOG_BASE + 0x0018)
+
+#define AXP_806_RESET_ADDR		0X32
 
 #include "sunxi_private.h"
 
@@ -27,6 +30,8 @@
 	MPIDR_AFFLVL2_VAL(mpidr) == 0 && \
 	MPIDR_AFFLVL1_VAL(mpidr) < PLATFORM_CLUSTER_COUNT && \
 	MPIDR_AFFLVL0_VAL(mpidr) < PLATFORM_MAX_CPUS_PER_CLUSTER)
+
+uint8_t restart[]={(1<<6)};
 
 static int sunxi_pwr_domain_on(u_register_t mpidr)
 {
@@ -62,12 +67,13 @@ static void __dead2 sunxi_system_off(void)
 static void __dead2 sunxi_system_reset(void)
 {
 	/* Reset the whole system when the watchdog times out */
-	mmio_write_32(SUNXI_WDOG0_CFG_REG, 1);
+	//mmio_write_32(SUNXI_WDOG0_CFG_REG, 1);
 	/* Enable the watchdog with the shortest timeout (0.5 seconds) */
-	mmio_write_32(SUNXI_WDOG0_MODE_REG, (0 << 4) | 1);
-	/* Wait for twice the watchdog timeout before panicking */
-	mdelay(1000);
+	//mmio_write_32(SUNXI_WDOG0_MODE_REG, (0 << 4) | 1);
 
+	sunxi_i2c_write(adapt_axp806,CONFIG_SYS_I2C_SLAVE,AXP_806_RESET_ADDR,1,restart,1);
+	mdelay(1000);
+	
 	ERROR("PSCI: System reset failed\n");
 	wfi();
 	panic();
