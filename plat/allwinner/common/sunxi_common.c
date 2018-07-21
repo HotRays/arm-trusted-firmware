@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <debug.h>
 #include <mmio.h>
 #include <platform.h>
 #include <platform_def.h>
+#include <spl_head.h>
 #include <sunxi_def.h>
+#include <sunxi_mmap.h>
 #include <xlat_tables_v2.h>
 
 #include "sunxi_private.h"
@@ -70,4 +73,26 @@ uint16_t sunxi_read_soc_id(void)
 	mmio_write_32(SRAM_VER_REG, reg & ~BIT(15));
 
 	return reg >> 16;
+}
+
+const char *sunxi_get_dt_name(void)
+{
+	const struct spl_head *spl_head =
+		(const struct spl_head *) SUNXI_SRAM_A1_BASE;
+
+	/* check magic & signature */
+	if (spl_head->magic[0] != SPL_MAGIC_eGON)
+		return NULL;
+
+	if (spl_head->magic[1] != SPL_MAGIC_BT0 &&
+	    spl_head->magic[1] != SPL_MAGIC_FEL)
+		return NULL;
+
+	if (spl_head->spl_sign[0] != SPL_SIGN[0] ||
+	    spl_head->spl_sign[1] != SPL_SIGN[1] ||
+	    spl_head->spl_sign[2] != SPL_SIGN[2] ||
+	    spl_head->spl_sign[3] < SPL_VER_DTNAME)
+		return NULL;
+
+	return (const char *)spl_head + spl_head->off_dt_name;
 }

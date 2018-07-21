@@ -13,6 +13,9 @@ void sunxi_cpu_on(unsigned int cluster, unsigned int core);
 void sunxi_disable_secondary_cpus(unsigned int primary_cpu);
 
 uint16_t sunxi_read_soc_id(void);
+const char *sunxi_get_dt_name(void);
+
+void sunxi_pmic_setup(const char *dtname);
 void sunxi_security_setup(void);
 
 #endif /* __SUNXI_PRIVATE_H__ */

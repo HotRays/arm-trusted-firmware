@@ -64,7 +64,7 @@ void bl31_plat_arch_setup(void)
 
 void bl31_platform_setup(void)
 {
-	const char *soc_name;
+	const char *soc_name, *dt_name;
 	uint16_t soc_id = sunxi_read_soc_id();
 
 	switch (soc_id) {
@@ -82,6 +82,13 @@ void bl31_platform_setup(void)
 		break;
 	}
 	NOTICE("BL31: Detected Allwinner %s SoC (%04x)\n", soc_name, soc_id);
+
+	dt_name = sunxi_get_dt_name();
+
+	if (dt_name != NULL)
+		NOTICE("BL31: Detected device tree named %s\n", dt_name);
+	else
+		WARN("BL31: Cannot detect device tree name, board-specific functions may behave incorrectly.\n");
 
 	generic_delay_timer_init();
 
