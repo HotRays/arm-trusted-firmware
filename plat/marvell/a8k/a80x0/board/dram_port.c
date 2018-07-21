@@ -6,7 +6,7 @@
  */
 
 #include <arch_helpers.h>
-#include <a8k_i2c.h>
+#include <mi2cv.h>
 #include <debug.h>
 #include <mmio.h>
 #include <mv_ddr_if.h>

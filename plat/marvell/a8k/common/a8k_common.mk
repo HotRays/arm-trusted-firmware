@@ -46,6 +46,7 @@ PLAT_INCLUDES		:=	-I$(PLAT_FAMILY_BASE)/$(PLAT)		\
 				-I$(PLAT_INCLUDE_BASE)/common		\
 				-Iinclude/drivers/marvell		\
 				-Iinclude/drivers/marvell/mochi		\
+				-Iinclude/drivers/mentor/i2c		\
 				$(ATF_INCLUDES)
 
 PLAT_BL_COMMON_SOURCES	:=	$(PLAT_COMMON_BASE)/aarch64/a8k_common.c \
