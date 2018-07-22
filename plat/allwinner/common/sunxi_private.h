@@ -18,4 +18,6 @@ const char *sunxi_get_dt_name(void);
 void sunxi_pmic_setup(const char *dtname);
 void sunxi_security_setup(void);
 
+void __dead2 sunxi_power_down(void);
+
 #endif /* __SUNXI_PRIVATE_H__ */
